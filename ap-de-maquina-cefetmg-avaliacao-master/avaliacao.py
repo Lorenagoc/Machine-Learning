@@ -55,7 +55,7 @@ class Experimento():
 
                 #1.(a) obtem o melhor metodo da otimização
                 #  . use o vetor arr_evaluated_methods e o número do best_trial (study.best_trial.number)
-                best_method = None #self.ClasseObjetivoOtimizacao.arr_evaluated_methods[study.best_trial.number]
+                best_method = objetivo_otimizacao.arr_evaluated_methods[study.best_trial.number]
                 self.studies_per_fold.append(study)
             else:
                 #caso contrario, o metodo, atributo da classe Experimento (sem modificações) é usado
@@ -63,7 +63,8 @@ class Experimento():
 
             ##2. Efetua a predição nos valores de teste (fold.df_data_to_predict)
             #logo após, adiciona em resultados o resultado predito (objeto da classe Resultado) usando o melhor metodo
-            resultado = Resultado(fold.df_data_to_predict,best_method.predict(fold.df_treino))
+            # resultado = Resultado(fold.df_data_to_predict,best_method.predict(fold.df_treino))
+            resultado = best_method.eval(fold.df_treino,fold.df_data_to_predict,fold.col_classe)
             self._resultados.append(resultado)
         return self._resultados
 
@@ -72,7 +73,7 @@ class Experimento():
         """
         Calcula a média do f1 dos resultados.
         """
-        return None
+        return np.mean([resultado.macro_f1 for resultado in self.resultados])
 
 class OtimizacaoObjetivo:
     def __init__(self,  fold: Fold):
