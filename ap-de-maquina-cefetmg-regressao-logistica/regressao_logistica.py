@@ -45,7 +45,7 @@ class RegressaoLogistica():
         """
         Atividade 2: Função que retorna os resultados da função z por instancia usando a matriz mat_x
         """
-        return self.func_ativacao.dz_funcao(mat_x)
+        return np.dot(mat_x,self.arr_w.T)+self.b
 
     def forward_propagation(self,mat_x):
         """
@@ -53,24 +53,24 @@ class RegressaoLogistica():
 
         mat_x: matriz de atributos por instancias tamanho (n,m)
         """
-        #print("MAT_X: "+str(mat_x))
-        #print("arr_w: "+str(self.arr_w))
-        #print("b: "+str(self.b))
+        print("MAT_X: "+str(mat_x))
+        print("arr_w: "+str(self.arr_w))
+        print("b: "+str(self.b))
 
         #caso nao esteja definido, inicialize o atributo self.arr_w com zero
         if(self.arr_w is None):
-            self.arr_w = None
+            self.arr_w = np.zeros(len(mat_x[0]))
         #defina o atributo mat_x
-        self.mat_x = None
+        self.mat_x = mat_x
 
         #faça o calculo do método z e armazene-o em arr_z
-        self.arr_z = None
+        self.arr_z = self.z(self.mat_x)
 
         #calcule a função de ativação (por meio do atributo) e armazene o resultado em arr_a
-        self.arr_a = None
+        self.arr_a = self.func_ativacao(self.arr_z )
 
-        #print("ARR_Z: "+str(self.arr_z))
-        #print("ARR_A: "+str(self.arr_a))
+        print("ARR_Z: "+str(self.arr_z))
+        print("ARR_A: "+str(self.arr_a))
 
         #o arr_a será retornado nessa função
         return self.arr_a
@@ -82,32 +82,36 @@ class RegressaoLogistica():
         #numero de instancias
         n_instances = len(arr_y)
 
-        #print("arr_a:"+str(self.arr_a)+" arr_z:"+str(self.arr_z)+" arr_y:"+str(arr_y))
-        #print("X: "+str(self.mat_a_ant))
+        print("arr_a:"+str(self.arr_a)+" arr_z:"+str(self.arr_z)+" arr_y:"+str(arr_y))
+        print("X: "+str(self.mat_x))
 
         #calcule dz por meio do atributo representando a função da derivada
-        arr_dz = None
-
+        arr_dz = self.arr_a-arr_y
 
         #a partir de arr_dz e mat_x, calcula arr_dw
-        arr_dw = None
+        arr_dw = 1/n_instances*np.dot(arr_dz,self.mat_x)
 
         #a partir de arr_dz, calcula db
-        db = None
+        db = 1/n_instances*np.sum(arr_dz)
 
-        #print("DZ: "+str(arr_dz))
-        #print("arr_dw: "+str(arr_dw))
-        #print("db: "+str(db))
+        print("DZ: "+str(arr_dz))
+        print("arr_dw: "+str(arr_dw))
+        print("db: "+str(db))
 
         #define o gradiente (instancie um objeto da classe Gradiente apropriadamente)
-        self.gradiente = None
+        self.gradiente = Gradiente(arr_dz,arr_dw,db)
 
         return self.gradiente
     def loss_function(self,arr_y):
         """
         Atividade 5: Calcule a loss function usando entropia cruzada (cross entropy)
         """
-        return None
+        arr_temp=-(arr_y*np.log(self.arr_a)+(1-arr_y)*np.log(1-self.arr_a))
+        #print(arr_temp)
+        result = np.sum(arr_temp)/(len(arr_y))
+        print(result)
+        return result
+    
 
 
     def atualiza_pesos(self,learning_rate):
