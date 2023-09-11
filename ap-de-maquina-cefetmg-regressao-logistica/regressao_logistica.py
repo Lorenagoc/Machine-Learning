@@ -17,7 +17,7 @@ class FuncaoAtivacao():
         self.dz_funcao = dz_funcao
 
 # Atividade 1: Crie as funções lambda para instanciar um objeto da classe FunçãoAtivacao. Lembre-se que funcao e dz_função são funções que estão sendo passadas como parametro
-funcao = lambda z: 1/np.exp(-z)+1
+funcao = lambda z: 1/(np.exp(-z)+1)
 dz_funcao = lambda a, z, y: a-y
 sigmoid = FuncaoAtivacao(funcao,dz_funcao)
 
@@ -53,9 +53,9 @@ class RegressaoLogistica():
 
         mat_x: matriz de atributos por instancias tamanho (n,m)
         """
-        print("MAT_X: "+str(mat_x))
-        print("arr_w: "+str(self.arr_w))
-        print("b: "+str(self.b))
+        #print("MAT_X: "+str(mat_x))
+        #print("arr_w: "+str(self.arr_w))
+        #print("b: "+str(self.b))
 
         #caso nao esteja definido, inicialize o atributo self.arr_w com zero
         if(self.arr_w is None):
@@ -69,8 +69,8 @@ class RegressaoLogistica():
         #calcule a função de ativação (por meio do atributo) e armazene o resultado em arr_a
         self.arr_a = self.func_ativacao(self.arr_z )
 
-        print("ARR_Z: "+str(self.arr_z))
-        print("ARR_A: "+str(self.arr_a))
+        #print("ARR_Z: "+str(self.arr_z))
+        #print("ARR_A: "+str(self.arr_a))
 
         #o arr_a será retornado nessa função
         return self.arr_a
@@ -82,8 +82,8 @@ class RegressaoLogistica():
         #numero de instancias
         n_instances = len(arr_y)
 
-        print("arr_a:"+str(self.arr_a)+" arr_z:"+str(self.arr_z)+" arr_y:"+str(arr_y))
-        print("X: "+str(self.mat_x))
+        #print("arr_a:"+str(self.arr_a)+" arr_z:"+str(self.arr_z)+" arr_y:"+str(arr_y))
+        #print("X: "+str(self.mat_x))
 
         #calcule dz por meio do atributo representando a função da derivada
         arr_dz = self.arr_a-arr_y
@@ -94,9 +94,9 @@ class RegressaoLogistica():
         #a partir de arr_dz, calcula db
         db = 1/n_instances*np.sum(arr_dz)
 
-        print("DZ: "+str(arr_dz))
-        print("arr_dw: "+str(arr_dw))
-        print("db: "+str(db))
+        #print("DZ: "+str(arr_dz))
+        #print("arr_dw: "+str(arr_dw))
+        #print("db: "+str(db))
 
         #define o gradiente (instancie um objeto da classe Gradiente apropriadamente)
         self.gradiente = Gradiente(arr_dz,arr_dw,db)
@@ -109,7 +109,7 @@ class RegressaoLogistica():
         arr_temp=-(arr_y*np.log(self.arr_a)+(1-arr_y)*np.log(1-self.arr_a))
         #print(arr_temp)
         result = np.sum(arr_temp)/(len(arr_y))
-        print(result)
+        #print(result)
         return result
     
 
@@ -118,8 +118,8 @@ class RegressaoLogistica():
         """
         Atividade 6: Atualize os pesos arr_w e b por meio do gradiente e o learning_rate (float)
         """
-        self.arr_w = None
-        self.b = None
+        self.arr_w = self.arr_w - learning_rate*self.gradiente.arr_dw
+        self.b = self.b - learning_rate*self.gradiente.db
 
     def fit(self,mat_x,arr_y,learning_rate=1.1):
         """
@@ -127,7 +127,10 @@ class RegressaoLogistica():
         imprime, a cada 10 épocas, a loss function obtida
         """
         for i in range(self.num_iteracoes):
-            None
+            self.forward_propagation(mat_x)
+            loss = self.loss_function(arr_y)
+            self.backward_propagation(arr_y)
+            self.atualiza_pesos(learning_rate)
 
             #print("A: "+str(self.arr_a))
             #print("Y:"+str(arr_y))
@@ -146,5 +149,6 @@ class RegressaoLogistica():
         Atividade 8 -usando as instancias mat_x, representando a matriz  𝑋  das instâncias que queremos prever,
         calcula-se o forward_propagation do modelo para, logo após, retornar o vetor de predições
         """
+        arr_a = self.forward_propagation(mat_x)
 
-        return None
+        return (arr_a>=0.5)*1
