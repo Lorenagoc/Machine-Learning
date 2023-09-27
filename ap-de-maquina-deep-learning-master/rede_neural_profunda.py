@@ -22,23 +22,23 @@ class FuncaoAtivacao():
         self.dz_ultima_camada = dz_ultima_camada
 
 sigmoid = FuncaoAtivacao(lambda z:1/(1+np.power(math.e,-z)),
-                      lambda a,z,y,arr_dz_w_prox:None,
-                      lambda a,z,y,arr_dz_w_prox:None
+                      lambda a,z,y,arr_dz_w_prox: a*(1-a)*arr_dz_w_prox,
+                      lambda a,z,y,arr_dz_w_prox: (a-y)
                       )
 
-relu = FuncaoAtivacao(lambda z:None,
-                      lambda a,z,y,arr_dz_w_prox:None
-                      )
-
-
-
-leaky_relu = FuncaoAtivacao(lambda z:None,
-                      lambda a,z,y,arr_dz_w_prox:None
+relu = FuncaoAtivacao(lambda z: (z>0)*z,
+                      lambda a,z,y,arr_dz_w_prox: (z>=0)*arr_dz_w_prox,
                       )
 
 
-tanh = FuncaoAtivacao(lambda z: None,
-                      lambda a,z,y,arr_dz_w_prox:None
+
+leaky_relu = FuncaoAtivacao(lambda z: (z>0)*z+(z<=0)*0.01*z,
+                      lambda a,z,y,arr_dz_w_prox: (z>=0)*arr_dz_w_prox+(z<0)*0.01*arr_dz_w_prox,
+                      )
+
+
+tanh = FuncaoAtivacao(lambda z: (np.exp(z)-np.exp(-z))/(np.exp(z)+np.exp(-z)),
+                      lambda a,z,y,arr_dz_w_prox: 1-np.tanh(np.power(a,2)),
                       )
 
 
