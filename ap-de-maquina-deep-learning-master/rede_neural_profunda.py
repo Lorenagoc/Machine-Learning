@@ -138,7 +138,7 @@ class Camada():
         Atividade 2: Inicialize o vetor de arr_unidades com a unidade correspondete
         """
         for i in range(qtd_unidades):
-            self.arr_unidades.append(None)
+            self.arr_unidades.append(Unidade(func_ativacao,func_dz))
 
 
 
@@ -149,11 +149,11 @@ class Camada():
         """
         #obtenha a quantidade de unidades na camada anterior  por meio de mat_a_ant
         #..pense nas dimensões da matriz
-        self.qtd_un_camada_ant = None
+        self.qtd_un_camada_ant = len(mat_a_ant[0,:])
 
         #Inicialize com zeros a matriz de ativacao da camada atual
         #..Novamente, verifique as dimensões da matriz
-        self.mat_a = None
+        self.mat_a = np.zeros((len(mat_a_ant),len(self.arr_unidades)))
 
         #print("MAT A:"+str(self.mat_a.shape))
         #print("MAT_A_ANT: "+str(mat_a_ant))
@@ -161,7 +161,9 @@ class Camada():
         #...o forward_propagation da unidade retorna um vetor arr_a com as ativações
         #... por instancia. Você deve armazenar os valores corretamente na matriz mat_a (veja especificação)
         for i,unidade in enumerate(self.arr_unidades):
-            None
+            #print(unidade.forward_propagation(mat_a_ant))
+            self.mat_a[:,i] = unidade.forward_propagation(mat_a_ant)
+            #print(self.mat_a)
 
         return self.mat_a
 
@@ -174,12 +176,12 @@ class Camada():
         """
         #inicialize com zero a matriz
         #de acordo com as suas dimensoes
-        _mat_w = None
+        _mat_w = np.zeros((len(self.arr_unidades),self.qtd_un_camada_ant))
 
         #para cada unidade, preencha corretamente os valores da matriz
         #usando o vetor de pesos de cada unidade
         for i,unidade in enumerate(self.arr_unidades):
-            _mat_w[None,None] = None
+            _mat_w[i,:] = unidade.arr_w
 
         return _mat_w
 
@@ -190,12 +192,13 @@ class Camada():
         Verifique as dimensões da matriz (preencha os None)
         """
         #inicialize com zero a matriz
-        _mat_dz = None
+        _mat_dz =  np.zeros((self.qtd_un_camada_ant,len(self.arr_unidades)))
+        #print(_mat_dz.shape)
 
         #para cada unidade, preencha corretamente os valores da matriz
         for i,unidade in enumerate(self.arr_unidades):
-            _mat_dz[None,None] = None
-
+            _mat_dz[:,i] = unidade.gradiente.arr_dz
+        #print(_mat_dz)
         return _mat_dz
 
     @property
@@ -204,7 +207,7 @@ class Camada():
         Realiza o calculo do produto entre mat_dz e mat_w
         chame as propriedades correspondentes
         """
-        return None
+        return self.mat_dz.dot(self.mat_w)
 
     def backward_propagation(self,arr_y):
         """
@@ -212,15 +215,15 @@ class Camada():
         """
         #obtenha o mat_dz_w da proxima camada
         #..Caso não exista proxima camada, mat_dz_w_prox permanecerá None
-        mat_dz_w_prox = None
+        mat_dz_w_prox = self.prox_camada.mat_dz if self.prox_camada else None
 
         for i,unidade in enumerate(self.arr_unidades):
             #Caso exista mat_dz_w_prox, obtenha o arr_dz_w_prox
             #..correspondente a esta unidade. Para isso, fique atento a dimensão de mat_dz_w_prox
-            arr_dz_w_prox =  None
+            arr_dz_w_prox = unidade.arr_a * mat_dz_w_prox.dot(self.prox_camada.mat_w) if self.prox_camada else unidade.arr_a-arr_y
 
             #chame o backwrd_propagation desta unidade
-            None
+            unidade.backward_propagation(arr_y,arr_dz_w_prox)
 
 
 
