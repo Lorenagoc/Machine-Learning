@@ -272,7 +272,7 @@ class RedeNeural():
         #para cada camada até a penultima, armazene em camada.prox_camada a camada seguinte
         for l,camada in enumerate(self.arr_camadas):
             if(l<len(self.arr_camadas)-1):
-                camada.prox_camada = self.arr_camadas[camada_l+1]
+                camada.prox_camada = self.arr_camadas[l+1]
 
 
     def forward_propagation(self):
@@ -280,8 +280,12 @@ class RedeNeural():
         Atividade 7: Execute, para todas as camadas, o método forward_propagation.
         """
         num_camadas = len(self.arr_camadas)
+        a_ant=None
         for camada in range(num_camadas):
-                        
+            if camada==0:
+                a_ant = self.arr_camadas[camada].forward_propagation(self.mat_x)
+            else:
+                a_ant = self.arr_camadas[camada].forward_propagation(a_ant)
 
 
     def backward_propagation(self):
