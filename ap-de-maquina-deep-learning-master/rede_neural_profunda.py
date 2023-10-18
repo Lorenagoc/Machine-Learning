@@ -192,7 +192,7 @@ class Camada():
         Verifique as dimensões da matriz (preencha os None)
         """
         #inicialize com zero a matriz
-        _mat_dz =  np.zeros((self.qtd_un_camada_ant,len(self.arr_unidades)))
+        _mat_dz =  np.zeros((self.mat_a.shape[0],len(self.arr_unidades)))
         #print(_mat_dz.shape)
 
         #para cada unidade, preencha corretamente os valores da matriz
@@ -215,12 +215,12 @@ class Camada():
         """
         #obtenha o mat_dz_w da proxima camada
         #..Caso não exista proxima camada, mat_dz_w_prox permanecerá None
-        mat_dz_w_prox = self.prox_camada.mat_dz if self.prox_camada else None
+        mat_dz_w_prox = self.prox_camada.mat_dz_w if self.prox_camada else None
 
         for i,unidade in enumerate(self.arr_unidades):
             #Caso exista mat_dz_w_prox, obtenha o arr_dz_w_prox
             #..correspondente a esta unidade. Para isso, fique atento a dimensão de mat_dz_w_prox
-            arr_dz_w_prox = unidade.arr_a * mat_dz_w_prox.dot(self.prox_camada.mat_w) if self.prox_camada else unidade.arr_a-arr_y
+            arr_dz_w_prox = mat_dz_w_prox[:,i] if self.prox_camada else None
 
             #chame o backwrd_propagation desta unidade
             unidade.backward_propagation(arr_y,arr_dz_w_prox)
@@ -259,25 +259,29 @@ class RedeNeural():
         for camada_l,qtd_unidades in enumerate(self.arr_qtd_un_por_camada):
             #por meio de arr_func_a_por_camada defina a dz_função que será usada
             #..caso seja a ultima camada, será usada a dz_ultima camada
-            dz_funcao = None if(camada_l<len(self.arr_qtd_un_por_camada)-1) else None
+            tmp_func_camada=self.arr_func_a_por_camada[camada_l]
+            dz_funcao = tmp_func_camada.dz_funcao if(camada_l<len(self.arr_qtd_un_por_camada)-1) else tmp_func_camada.dz_ultima_camada
             #instancie a camda
-            obj_camada = None
+            obj_camada = Camada(qtd_unidades,tmp_func_camada.funcao,tmp_func_camada.dz_funcao)
             self.arr_camadas.append(obj_camada)
 
             #armazena a camada anterior
             if(camada_l>0):
-                obj_camada.ant_camada = None
+                obj_camada.ant_camada = self.arr_camadas[camada_l-1]
 
         #para cada camada até a penultima, armazene em camada.prox_camada a camada seguinte
         for l,camada in enumerate(self.arr_camadas):
             if(l<len(self.arr_camadas)-1):
-                camada.prox_camada = None
+                camada.prox_camada = self.arr_camadas[camada_l+1]
+
 
     def forward_propagation(self):
         """
         Atividade 7: Execute, para todas as camadas, o método forward_propagation.
         """
         num_camadas = len(self.arr_camadas)
+        for camada in range(num_camadas):
+                        
 
 
     def backward_propagation(self):
