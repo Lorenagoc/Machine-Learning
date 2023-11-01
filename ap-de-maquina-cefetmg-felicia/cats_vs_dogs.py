@@ -100,42 +100,42 @@ def fully_connected_model():
     entrada = Input(shape=(150,150,3),name="Entrada")
 
     #camadas a serem usadas
-    achatar = None
-    camada_um = None
-    camada_dois = None
-    camada_tres = None
+    achatar =  layers.Flatten()(entrada)
+    camada_um = layers.Dense(500,activation="relu",name="Camada1")(achatar)
+    camada_dois = layers.Dense(200,activation="relu",name="Camada2")(camada_um)
+    camada_tres = layers.Dense(100,activation="relu",name="Camada3")(camada_dois)
 
     #camada de saida
     #lembre-se que é uma classificação binária
-    saida = None
+    saida = layers.Dense(1,activation="sigmoid", name="saida")(camada_tres)
 
     #cria-se o modelo
-    modelo = None
+    modelo =  Model(inputs=entrada, outputs=saida)
     return modelo
 
 
 def simple_cnn_model(add_dropout=False):
     #entrada
-    entrada = None
+    entrada = Input(shape=(150,150,3),name="Entrada")
 
     #demais camadas
+    conv1 =layers.Conv2D(32,(3,3),activation="relu",name="Convolucao1")(entrada)
+    max1= layers.MaxPool2D((2,2),strides=2)(conv1)
+    conv2 =layers.Conv2D(64,(3,3),activation="relu",name="Convolucao2")(max1)
+    max2= layers.MaxPool2D((2,2),strides=2)(conv2)
+    conv3 =layers.Conv2D(128,(3,3),activation="relu",name="Convolucao3")(max2)
+    max3= layers.MaxPool2D((2,2),strides=2)(conv3)
+    conv4 =layers.Conv2D(128,(3,3),activation="relu",name="Convolucao4")(max3)
+    max4= layers.MaxPool2D((2,2),strides=2)(conv4)
+    achatar =  layers.Flatten()(max4)
 
-
-
-
-
-
-
-
-
-    achatar = layers.Flatten()(max_polling_d)
     if(add_dropout):
-        achatar = None
-    fc_a = None
+        achatar = layers.Dropout(.5)(achatar)
+    camfc = layers.Dense(512,activation="relu",name="CamadaFC")(achatar)
     #camada de saida com 3 neuronios - cada um, respresntando uma classe
     #lembre de passar a cmada correta como saida
     #lembre-se que é uma classificação binária
-    saida = None
+    saida = layers.Dense(1,activation="sigmoid", name="saida")(camfc)
 
     #cria-se o modelo
     modelo = Model(inputs=entrada, outputs=saida)
