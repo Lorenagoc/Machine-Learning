@@ -138,8 +138,8 @@ class BagOfWords(PreprocessDataset):
 
     def generate_preproc_train(self,df_data:pd.DataFrame, class_col:str) -> pd.DataFrame:
         mat_bow = self.vectorizer.fit_transform(df_data[self.text_col])
-        return pd.DataFrame(mat_bow.toarray(),columns=self.vectorizer.get_feature_names(),index=df_data.index)
+        return pd.DataFrame(mat_bow.toarray(),columns=self.vectorizer.get_feature_names_out(),index=df_data.index)
 
     def generate_preproc_test(self, df_data:pd.DataFrame, class_col:str) -> pd.DataFrame:
         mat_bow = self.vectorizer.transform(df_data[self.text_col])
-        return pd.DataFrame(mat_bow.toarray(),columns=self.vectorizer.get_feature_names(),index=df_data.index)
+        return pd.DataFrame(mat_bow.toarray(),columns=self.vectorizer.get_feature_names_out(),index=df_data.index)
