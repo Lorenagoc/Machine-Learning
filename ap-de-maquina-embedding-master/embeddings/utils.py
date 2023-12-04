@@ -111,14 +111,14 @@ class Analogy:
     def analogia(self, palavra_x:str, esta_para:str, assim_como:str) -> List:
         
         #calcula o embeding da analogia
-        embedding = None
+        embedding = self.calcula_embedding_analogia(palavra_x, esta_para, assim_como)
 
         #caso não exista uma das palavras, é retornado uma lista vazia
         if embedding is None:
             return []
 
         #obtem as palavras mais similares     
-        _,words = None
+        _,words = self.kdtree_embedding.get_most_similar_embedding(embedding, k_most_similar=5, words_to_ignore=[palavra_x,esta_para,assim_como])
 
         return words
 
